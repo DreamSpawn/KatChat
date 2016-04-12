@@ -11,16 +11,8 @@ import java.util.ArrayList;
  *
  * @author JoachimØstergaard
  */
-public class IKatServer {
-
-    public interface GalgeI extends java.rmi.Remote {
-
-        public int login(String name, String password) throws java.rmi.RemoteException;
-
-        public String getMessage( int session) throws java.rmi.RemoteException;
-
-        public void sentMessage(String message, int session) throws java.rmi.RemoteException;
-
-
-}
+public interface IKatServer extends java.rmi.Remote{
+    public int login(String name, String password) throws java.rmi.RemoteException;
+    public ArrayList<String> getMessage( int session) throws java.rmi.RemoteException;
+    public void sentMessage(String message, int session) throws java.rmi.RemoteException;
 }
