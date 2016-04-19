@@ -17,6 +17,12 @@ function getMessages() {
 }
 
 function updateText(text) {
-	alert(text);
+	var messages = document.getElementById("messages");
+	messages.value = messages.value + text;
+	
 	getMessages();
+}
+
+function sendText(){
+	
 }

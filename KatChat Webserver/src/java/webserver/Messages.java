@@ -7,10 +7,18 @@ package webserver;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.MalformedURLException;
+import java.rmi.Naming;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import server.IKatServer;
+import server.JavaServer;
 
 /**
  *
@@ -30,10 +38,20 @@ public class Messages extends HttpServlet {
 	protected void processRequest(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
+		/*try {
+			IKatServer java_server = (IKatServer) Naming.lookup(JavaServer.completeAdress());
+		} catch (NotBoundException ex) {
+			Logger.getLogger(Messages.class.getName()).log(Level.SEVERE, null, ex);
+		} catch (MalformedURLException ex) {
+			Logger.getLogger(Messages.class.getName()).log(Level.SEVERE, null, ex);
+		} catch (RemoteException ex) {
+			Logger.getLogger(Messages.class.getName()).log(Level.SEVERE, null, ex);
+		}*/
+
 		Object gate = new Object();
 		synchronized (gate) {
 			try {
-				gate.wait(10000);
+				gate.wait(1000);
 			} catch (InterruptedException e) {
 			}
 		}
