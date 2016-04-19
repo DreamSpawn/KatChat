@@ -19,10 +19,21 @@ function getMessages() {
 function updateText(text) {
 	var messages = document.getElementById("messages");
 	messages.value = messages.value + text;
-	
+
 	getMessages();
 }
 
-function sendText(){
-	
+function sendMessage() {
+	var input = document.getElementById("input");
+	var message = input.value;
+	input.value = "";
+	var xhttp = new XMLHttpRequest();
+	xhttp.onreadystatechange = function () {
+		if (xhttp.readyState === 4 && xhttp.status === 200) {
+			updateText(xhttp.responseText);
+		}
+	};
+	xhttp.open("POST", "messages", true);
+	xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+	xhttp.send("message=" + message);
 }

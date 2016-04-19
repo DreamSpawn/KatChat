@@ -25,6 +25,8 @@ import server.JavaServer;
  * @author Mikkel
  */
 public class Messages extends HttpServlet {
+	
+	String message = "<none>";
 
 	/**
 	 * Handles the HTTP <code>GET</code> method.
@@ -48,8 +50,7 @@ public class Messages extends HttpServlet {
 
 		response.setContentType("text/plain;charset=UTF-8");
 		try (PrintWriter out = response.getWriter()) {
-			/* TODO output your page here. You may use following sample code. */
-			out.println("New message has been recieved");
+			out.println("New message tick. Last message:" + this.message);
 		}
 	}
 
@@ -64,6 +65,8 @@ public class Messages extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+		this.message = request.getParameter("message");
+		
 	}
 
 	/**
@@ -73,7 +76,7 @@ public class Messages extends HttpServlet {
 	 */
 	@Override
 	public String getServletInfo() {
-		return "Short description";
-	}// </editor-fold>
+		return "Send or recieve messages";
+	}
 
 }
