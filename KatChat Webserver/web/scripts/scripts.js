@@ -19,6 +19,7 @@ function getMessages() {
 function updateText(text) {
 	var messages = document.getElementById("messages");
 	messages.value = messages.value + text;
+	messages.scrollTop = messages.scrollHeight;
 
 	getMessages();
 }

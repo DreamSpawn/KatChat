@@ -12,8 +12,9 @@ and open the template in the editor.
 		<script type="text/javascript" src="scripts/scripts.js"></script>
 	</head>
 	<body onload="getMessages()">
-		<textarea id="messages"></textarea>
-		<input type="text" id="input">
+		<textarea id="messages" readonly></textarea>
+		<BR>
+		<input type="text" id="input" onkeypress="if (event.keyCode === 13) sendMessage();">
 		<button onclick="sendMessage()">Send</button>
 	</body>
 </html>
