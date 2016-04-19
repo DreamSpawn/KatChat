@@ -8,3 +8,17 @@ and open the template in the editor.
     Author     : Mikkel
 */
 
+textarea {
+	width: 50em;
+	height: 30em;
+}
+
+input {
+	width: 44em;
+	height: 2em;
+}
+
+button {
+	height: 2em;
+	width: 5em;
+}
