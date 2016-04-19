@@ -29,18 +29,19 @@ public class Messages extends HttpServlet {
 	 */
 	protected void processRequest(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		response.setContentType("text/html;charset=UTF-8");
+
+		Object gate = new Object();
+		synchronized (gate) {
+			try {
+				gate.wait(10000);
+			} catch (InterruptedException e) {
+			}
+		}
+
+		response.setContentType("text/plain;charset=UTF-8");
 		try (PrintWriter out = response.getWriter()) {
 			/* TODO output your page here. You may use following sample code. */
-			out.println("<!DOCTYPE html>");
-			out.println("<html>");
-			out.println("<head>");
-			out.println("<title>Servlet Messages</title>");			
-			out.println("</head>");
-			out.println("<body>");
-			out.println("<h1>Servlet Messages at " + request.getContextPath() + "</h1>");
-			out.println("</body>");
-			out.println("</html>");
+			out.println("New message has been recieved");
 		}
 	}
 
