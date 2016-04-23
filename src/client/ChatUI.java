@@ -28,7 +28,10 @@ public class ChatUI {
 		final JPanel panelButtom = new JPanel();
 		final JTextField textToSend = new JTextField();
 		final JTextField textUserName = new JTextField();
-		final JLabel labelName = new JLabel("User");
+		final JTextField textPswd = new JTextField();
+		final JLabel labelUser = new JLabel("Brugernavn: ");
+		final JLabel labelName = new JLabel("");
+		final JLabel labelPswd = new JLabel("Kodeord: ");
 		final JButton buttonSend = new JButton("Send");
 		final JButton buttonLogin = new JButton("Login");
 		final JList ls = new JList();
@@ -38,8 +41,10 @@ public class ChatUI {
 		panelCN.setLayout(new BorderLayout(5, 5));
 		panelButtom.setLayout(new BorderLayout(5, 5));
 
-		panelTop.add(new JLabel("Brugernavn: "));
+		panelTop.add(labelUser);
 		panelTop.add(textUserName);
+		panelTop.add(labelPswd);
+		panelTop.add(textPswd);
 		panelTop.add(buttonLogin);
 
 		panelCN.add(new JScrollPane(), BorderLayout.CENTER);
@@ -71,6 +76,8 @@ public class ChatUI {
 				if(isUserNameOK){
 					labelName.setText(textUserName.getText());
 					panelTop.remove(textUserName);
+					panelTop.remove(textPswd);
+					panelTop.remove(labelPswd);
 					panelTop.remove(buttonLogin);
 					panelTop.add(labelName);
 					ls.setVisible(true);
@@ -90,5 +97,6 @@ public class ChatUI {
 		frame.setContentPane(panelMain);
 		frame.setSize(500, 500);
 		frame.setVisible(true);
+		frame.setDefaultCloseOperation(frame.EXIT_ON_CLOSE);
 	}
 }
