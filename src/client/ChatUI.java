@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.rmi.Naming;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -16,9 +17,33 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
-public class ChatUI {
-	boolean isUserNameOK = false;
+import server.IKatServer;
 
+public class ChatUI {
+	private boolean isUserNameOK = false;
+	private int sessionID;
+	private IKatServer srv;
+	
+	public void doConnect(){
+		try {
+			srv = (IKatServer) Naming.lookup("rmi://ubuntu4.javabog.dk");
+		} catch (Exception e) {e.printStackTrace();	}
+	}
+	
+	public int doLogin(String userName, String pswd){
+		int sID = 0;
+		try {
+			sID = srv.login(userName, pswd);
+		} catch (Exception e) {e.printStackTrace();	}
+		return sID;
+	}
+
+	public void doSendMsg(String msg){
+		try {
+			srv.sentMessage(msg, sessionID);
+		} catch (Exception e) {e.printStackTrace();	}
+	}
+	
 	public ChatUI(){
 		System.out.println("ChatUI");
 		final JFrame frame = new JFrame("KatChat");
@@ -86,12 +111,19 @@ public class ChatUI {
 				}
 
 			} });
-		buttonSend.addActionListener(new ActionListener() {
+		buttonLogin.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent e) {		} });
+			public void actionPerformed(ActionEvent e) {
+				sessionID = doLogin(textUserName.getText(), textPswd.getText());
+			} 
+		});
+
 		textToSend.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent e) {		} });
+			public void actionPerformed(ActionEvent e) {		
+				doSendMsg(textToSend.getText());
+			} 
+		});
 
 
 		frame.setContentPane(panelMain);
@@ -99,4 +131,5 @@ public class ChatUI {
 		frame.setVisible(true);
 		frame.setDefaultCloseOperation(frame.EXIT_ON_CLOSE);
 	}
+
 }
