@@ -62,8 +62,12 @@ public class ServerLogic extends UnicastRemoteObject implements IKatServer {
 
 	@Override
 	public void sentMessage(String message, int session) throws RemoteException {
-		//TODO check sessssion
 		System.out.println("Message recieved from:" + session + "\nMessage:" + message);
+		SessionInfo info = current_users.getSession(session);
+		if (info == null)
+			return;
+		
+		message = info.name + ": " + message;
 		synchronized (messages) {
 			messages.add(message);
 			messages.notifyAll();

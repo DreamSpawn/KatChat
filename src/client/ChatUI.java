@@ -53,10 +53,11 @@ public class ChatUI {
 		return sID;
 	}
 
-	public void doSendMsg(String msg) {
-		System.out.println("Sending message:" + msg);
+	public void doSendMsg(JTextField input) {
+		System.out.println("Sending message:" + input.getText());
 		try {
-			srv.sentMessage(msg, sessionID);
+			srv.sentMessage(input.getText(), sessionID);
+			input.setText("");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -148,14 +149,14 @@ public class ChatUI {
 		textToSend.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				doSendMsg(textToSend.getText());
+				doSendMsg(textToSend);
 			}
 		});
 		
 		buttonSend.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				doSendMsg(textToSend.getText());
+				doSendMsg(textToSend);
 			}
 		});
 
