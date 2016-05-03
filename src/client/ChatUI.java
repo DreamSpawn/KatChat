@@ -14,6 +14,7 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
@@ -24,6 +25,7 @@ public class ChatUI {
 	private boolean isUserNameOK = false;
 	private int sessionID;
 	private IKatServer srv;
+	private JTextArea recievedText;
 
 	public void doConnect() {
 		System.out.println("client.ChatUI.doConnect()");
@@ -75,7 +77,10 @@ public class ChatUI {
 		final JLabel labelPswd = new JLabel("Kodeord: ");
 		final JButton buttonSend = new JButton("Send");
 		final JButton buttonLogin = new JButton("Login");
-		final JList ls = new JList();
+		this.recievedText = new JTextArea();
+		final JScrollPane scrollPane = new JScrollPane(this.recievedText);
+		
+		//final JList ls = new JList();
 
 		panelMain.setLayout(new BorderLayout(5, 5));
 		panelTop.setLayout(new GridLayout(1, 5));
@@ -88,10 +93,13 @@ public class ChatUI {
 		panelTop.add(textPswd);
 		panelTop.add(buttonLogin);
 
-		panelCN.add(new JScrollPane(), BorderLayout.CENTER);
-		panelCN.add(ls, BorderLayout.EAST);
-		ls.setVisible(false);
+		//panelCN.add(new JScrollPane(), BorderLayout.CENTER);
+		//panelCN.add(ls, BorderLayout.EAST);
+		//ls.setVisible(false);
 
+		recievedText.setEditable(false);
+		panelCN.add(scrollPane);
+		
 		panelButtom.add(textToSend, BorderLayout.CENTER);
 		panelButtom.add(buttonSend, BorderLayout.EAST);
 		textToSend.setVisible(false);
@@ -125,9 +133,12 @@ public class ChatUI {
 						panelTop.remove(labelPswd);
 						panelTop.remove(buttonLogin);
 						panelTop.add(labelName);
-						ls.setVisible(true);
+						// ls.setVisible(true);
 						textToSend.setVisible(true);
 						buttonSend.setVisible(true);
+						recievedText.setText("Logged in to server");
+						MessageFetcher fetcher = new MessageFetcher(srv, recievedText, sessionID);
+						 (new Thread(fetcher)).start();
 					}
 				}
 			}
@@ -148,6 +159,7 @@ public class ChatUI {
 			}
 		});
 
+		
 
 		frame.setContentPane(panelMain);
 		frame.setSize(500, 500);
