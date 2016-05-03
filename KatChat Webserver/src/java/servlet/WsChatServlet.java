@@ -68,7 +68,7 @@ public class WsChatServlet extends HttpServlet {
         Login login = (Login) session.getAttribute("login");
         String name = login.getUserName();
         String message = request.getParameter("message");
-        String htmlMessage = name + ": " + message ;
+        String htmlMessage =  message ;
        
         for (AsyncContext asyncContext : asyncContexts) {
             try (PrintWriter writer = asyncContext.getResponse().getWriter()) {

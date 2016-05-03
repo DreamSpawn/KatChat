@@ -40,7 +40,7 @@
                // var nameText = escape(document.getElementById("name").value);
                 var messageText = escape(document.getElementById("message").value);
                 document.getElementById("message").value = "";
-                xmlhttp.send("message="+messageText);
+                xmlhttp.send("message="+messageText+" user=<%= login.getUserName()%>");
             }
                                
                                
@@ -53,8 +53,8 @@
                         if (xmlhttp.readyState===4 && xmlhttp.status===200) {
                             messagesWaiting = false;
                             var contentElement = document.getElementById("content");
-                           var name = "<%= login.getUserName()%>";
-                             messagesTextArea.value += xmlhttp.responseText;
+                           
+                             messagesTextArea.value +=  xmlhttp.responseText;
                         }
                     }
                     xmlhttp.open("GET", "WsChatServlet?t="+new Date(), true);
@@ -63,13 +63,8 @@
             }
             setInterval(getMessages, 1000);
         </script>
-  
-
-     
-
-
-
-
+ 
         </div>
     </body>
 </html>
+
