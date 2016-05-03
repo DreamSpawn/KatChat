@@ -5,33 +5,33 @@
  */
 package server;
 
-
 import java.util.ArrayList;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 import java.rmi.*;
 import java.rmi.server.*;
+import java.util.List;
 
 /**
  *
  * @author Mikkel
  */
 public class ServerLogic extends UnicastRemoteObject implements IKatServer {
-	public static HashMap<String, String> credentials = new HashMap<String, String>();
-	public static HashMap<Integer, String> current_users = new HashMap<Integer, String>();
-	public static HashMap<Integer, ArrayList<String>> users_messages = new HashMap<Integer, ArrayList<String>>();
 
-	public ServerLogic() throws RemoteException{
-		credentials.put("Konstantin", "mypassword");
-		credentials.put("Mikkel", "hispassword");
-		credentials.put("demo", "password");
+	private static SessionList current_users = new SessionList();
+	public static List<String> messages = new ArrayList<>();
+
+	private static final IUserDataBase USERS = new UserDatabaseMap();
+
+	public ServerLogic() throws RemoteException {
+		USERS.addUser("Konstantin", "mypassword");
+		USERS.addUser("Mikkel", "hispassword");
+		USERS.addUser("demo", "password");
 	}
 
 	@Override
 	public int login(String name, String password) throws RemoteException {
-		if(credentials.get(name.trim())!=null && credentials.get(name.trim()).equals(password)){
+		if (USERS.hasUser(name.trim(), password)) {
 			System.out.println("successful login");
 			return getSessionId(name);
 		}
@@ -41,39 +41,57 @@ public class ServerLogic extends UnicastRemoteObject implements IKatServer {
 
 	@Override
 	public ArrayList<String> getMessage(int session) throws RemoteException {
-		ArrayList<String> user_message_list=users_messages.get(session);
-		return user_message_list;
+		SessionInfo info = current_users.getSession(session);
+		if (info != null) {
+			if (info.lastMessage == messages.size()) {
+				synchronized (messages) {
+					try {
+						messages.wait();
+					} catch (InterruptedException ex) {
+					}
+				}
+			}
+			ArrayList<String> returnMessages = new ArrayList<>(
+					messages.subList(info.lastMessage, messages.size()));
+			info.lastMessage = messages.size();
+			current_users.update(session, info);
+			return returnMessages;
+		}
+		return null;
 	}
 
 	@Override
 	public void sentMessage(String message, int session) throws RemoteException {
-		for ( Map.Entry<Integer, ArrayList<String>> entry : users_messages.entrySet()) {
-    			int session_id = entry.getKey();
-			if(session_id!=session){
-				ArrayList<String> user_message_list= entry.getValue();
-				user_message_list.add(message);
-			}
+		//TODO check sessssion
+		System.out.println("Message recieved from:" + session + "\nMessage:" + message);
+		synchronized (messages) {
+			messages.add(message);
+			messages.notifyAll();
 		}
 	}
-	
-	public static int getSessionId(String username) {
-    		
-		Random rand=new Random();
-    		int randomNum = rand.nextInt((10000 - 1) + 1) + 1;
-		while(current_users.get(randomNum)!=null){
-			randomNum = rand.nextInt((10000 - 1) + 1) + 1;
+
+	private int getSessionId(String username) {
+		if (current_users.getId(username) != null) {
+			return current_users.getId(username);
 		}
-		current_users.put(randomNum,username);
-		users_messages.put(randomNum,new ArrayList<String>());
-		printCurrentUsers();
-    		return randomNum;
+
+		Random rand = new Random();
+
+		int id;
+		do {
+			id = rand.nextInt();
+		} while (current_users.getSession(id) != null);
+
+		current_users.put(username, id);
+		return id;
 	}
-	public static void printCurrentUsers(){
-		for ( Map.Entry<Integer, String> entry : current_users.entrySet()) {
-    			int session_id = entry.getKey();
-    			String username = entry.getValue();
-    			System.out.println("session Id "+session_id +" username "+username+"\n");
+
+	private void printCurrentUsers() {
+		for (Map.Entry<Integer, SessionInfo> entry : current_users.entrySet()) {
+			int session_id = entry.getKey();
+			String username = entry.getValue().name;
+			System.out.println("session Id " + session_id + " username " + username + "\n");
 		}
 	}
-	
+
 }

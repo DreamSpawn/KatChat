@@ -20,31 +20,47 @@ import javax.swing.border.EmptyBorder;
 import server.IKatServer;
 
 public class ChatUI {
+
 	private boolean isUserNameOK = false;
 	private int sessionID;
 	private IKatServer srv;
-	
-	public void doConnect(){
+
+	public void doConnect() {
+		System.out.println("client.ChatUI.doConnect()");
 		try {
-			srv = (IKatServer) Naming.lookup("rmi://ubuntu4.javabog.dk");
-		} catch (Exception e) {e.printStackTrace();	}
+			srv = (IKatServer) Naming.lookup(IKatServer.FULL_ADDRESS);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		System.out.println("connected to server at" + IKatServer.FULL_ADDRESS);
 	}
-	
-	public int doLogin(String userName, String pswd){
+
+	public int doLogin(String userName, String pswd) {
+		System.out.println("client.ChatUI.doLogin()");
+		if (srv == null) {
+			doConnect();
+		}
+
 		int sID = 0;
 		try {
 			sID = srv.login(userName, pswd);
-		} catch (Exception e) {e.printStackTrace();	}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		System.out.println("Logged in with ID =" + sID);
 		return sID;
 	}
 
-	public void doSendMsg(String msg){
+	public void doSendMsg(String msg) {
+		System.out.println("Sending message:" + msg);
 		try {
 			srv.sentMessage(msg, sessionID);
-		} catch (Exception e) {e.printStackTrace();	}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
-	
-	public ChatUI(){
+
+	public ChatUI() {
 		System.out.println("ChatUI");
 		final JFrame frame = new JFrame("KatChat");
 		final JPanel panelMain = new JPanel();
@@ -86,43 +102,50 @@ public class ChatUI {
 		panelMain.add(panelButtom, BorderLayout.SOUTH);
 		panelMain.setBorder(new EmptyBorder(10, 10, 10, 10));
 
-		//Ska sende et request til java-serveren, om brugeren existere
 		buttonLogin.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 
-				if(textUserName.getText().isEmpty()){
+				if (textUserName.getText().isEmpty()) {
 					JOptionPane.showMessageDialog(frame,
 							"Indtast venligst Brugernavn!",
 							"Inane warning",
 							JOptionPane.WARNING_MESSAGE);
+				} else {
+					sessionID = doLogin(textUserName.getText(), textPswd.getText());
+					if (sessionID == -1) {
+						JOptionPane.showMessageDialog(frame,
+								"Det indtastede brugernavn og kode er ikke korrekt",
+								"Inane warning",
+								JOptionPane.WARNING_MESSAGE);
+					} else {
+						labelName.setText(textUserName.getText());
+						panelTop.remove(textUserName);
+						panelTop.remove(textPswd);
+						panelTop.remove(labelPswd);
+						panelTop.remove(buttonLogin);
+						panelTop.add(labelName);
+						ls.setVisible(true);
+						textToSend.setVisible(true);
+						buttonSend.setVisible(true);
+					}
 				}
-				if(textUserName.getText().isEmpty() == false) isUserNameOK = true; 
-				if(isUserNameOK){
-					labelName.setText(textUserName.getText());
-					panelTop.remove(textUserName);
-					panelTop.remove(textPswd);
-					panelTop.remove(labelPswd);
-					panelTop.remove(buttonLogin);
-					panelTop.add(labelName);
-					ls.setVisible(true);
-					textToSend.setVisible(true);
-					buttonSend.setVisible(true);
-				}
+			}
 
-			} });
-		buttonLogin.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				sessionID = doLogin(textUserName.getText(), textPswd.getText());
-			} 
 		});
 
 		textToSend.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent e) {		
+			public void actionPerformed(ActionEvent e) {
 				doSendMsg(textToSend.getText());
-			} 
+			}
+		});
+		
+		buttonSend.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				doSendMsg(textToSend.getText());
+			}
 		});
 
 

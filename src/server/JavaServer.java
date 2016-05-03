@@ -13,8 +13,10 @@ import java.rmi.registry.Registry;
  * @author Mikkel
  */
 public class JavaServer {
-	private static final int PORT = 4092;
-	private static final String HOST = "ubuntu4.javabog.dk";
+	private static final int PORT = IKatServer.PORT;
+	private static final String HOST = IKatServer.HOST;
+	private static final String SERVICE = IKatServer.SERVICE;
+	private static final String FULL_ADDRESS = IKatServer.FULL_ADDRESS;
 	
     public static void main(String[] arg) throws Exception
 	{
@@ -22,9 +24,9 @@ public class JavaServer {
      	System.setProperty("java.rmi.server.hostname", HOST);
 		java.rmi.registry.LocateRegistry.createRegistry(PORT); // start i server-JVM
 		IKatServer logic = new ServerLogic();
- 		Naming.rebind("rmi://" + HOST + ":" + PORT + "/kat_chat", logic);
+ 		Naming.rebind(FULL_ADDRESS, logic);
 		System.out.println("Katserver registreret på port:" + PORT);
 		Registry reg = java.rmi.registry.LocateRegistry.getRegistry(PORT);
-		System.out.println(reg.lookup("kat_chat"));
+		System.out.println(reg.lookup(SERVICE));
 	}
 }
