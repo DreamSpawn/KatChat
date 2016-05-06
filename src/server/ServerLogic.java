@@ -27,6 +27,10 @@ public class ServerLogic extends UnicastRemoteObject implements IKatServer {
 		USERS.addUser("Konstantin", "mypassword");
 		USERS.addUser("Mikkel", "hispassword");
 		USERS.addUser("demo", "password");
+                USERS.addUser("Kim", "herspassword");
+                USERS.addUser("Joakim", "ijdovbibszovhob120932349oi8yeSDVV!");
+                USERS.addUser("Teacher", "qwerty");
+                USERS.addUser("null", "");
 	}
 
 	@Override
