@@ -5,14 +5,14 @@ package servlet;
 public class Login {
 	private String userName;
 	private String password;
-	private String sessionId;
-	private String valid;
+	private int sessionId;
+	private boolean valid;
 	
 	public Login(){
 		this.userName = "";
 		this.password = "";
-		this.sessionId = "";
-		this.valid = "";
+		this.sessionId = -1;
+		this.valid = false;
 	}
 	
 	public void setUserName(String userName){
@@ -31,19 +31,19 @@ public class Login {
 		return this.password;
 	}
 
-	public String getSessionId() {
+	public int getSessionId() {
 		return sessionId;
 	}
 
-	public void setSessionId(String userType) {
-		this.sessionId = userType;
+	public void setSessionId(int id) {
+		this.sessionId = id;
 	}
 
-	public String getValid() {
+	public boolean getValid() {
 		return valid;
 	}
 
-	public void setValid(String userID) {
+	public void setValid(boolean userID) {
 		this.valid = userID;
 	}
 	

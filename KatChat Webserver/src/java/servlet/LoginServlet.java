@@ -7,6 +7,12 @@ package servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.MalformedURLException;
+import java.rmi.Naming;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -14,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.RequestDispatcher;
+import server.IKatServer;
 
 /**
  *
@@ -36,6 +43,16 @@ public class LoginServlet extends HttpServlet {
         protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
          response.setContentType("text/html");
+         IKatServer server =null;
+         try {
+             server = (IKatServer) Naming.lookup(IKatServer.FULL_ADDRESS);
+         } catch (NotBoundException ex) {
+             Logger.getLogger(LoginServlet.class.getName()).log(Level.SEVERE, null, ex);
+         } catch (MalformedURLException ex) {
+             Logger.getLogger(LoginServlet.class.getName()).log(Level.SEVERE, null, ex);
+         } catch (RemoteException ex) {
+             Logger.getLogger(LoginServlet.class.getName()).log(Level.SEVERE, null, ex);
+         }
             PrintWriter printWriter = response.getWriter();
             HttpSession httpSession = request.getSession(true);
             String username =request.getParameter("userID");
@@ -45,18 +62,24 @@ public class LoginServlet extends HttpServlet {
             httpSession.setAttribute("password", password);
              HttpSession session = request.getSession();
             login = (Login) session.getAttribute("login");
-            
+            int sessionID = server.login(username, password);
+            if(sessionID != -1){
+            login.setSessionId(sessionID);
             //TJekker valid og giver session ID 
-            if(username !=null){
+           
                 login.setUserName(username);
+                login.setSessionId(sessionID);
+                login.setValid(true);
             if(username.equals("jokse")||username.equals("joey")){ 
-                login.setValid("SessionIdTrue");
+               
             
             String nextJSP = "/chat.jsp"; 
             RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(nextJSP);//sender videre til ny jsp side
             dispatcher.forward(request,response);
-            }else login.setValid("false");
             }
+            }
+            
+         
         }
     
     
