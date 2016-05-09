@@ -27,10 +27,10 @@ public class ServerLogic extends UnicastRemoteObject implements IKatServer {
 		USERS.addUser("Konstantin", "mypassword");
 		USERS.addUser("Mikkel", "hispassword");
 		USERS.addUser("demo", "password");
-                USERS.addUser("Kim", "herspassword");
-                USERS.addUser("Joakim", "ijdovbibszovhob120932349oi8yeSDVV!");
-                USERS.addUser("Teacher", "qwerty");
-                USERS.addUser("null", "");
+		USERS.addUser("Kim", "herspassword");
+		USERS.addUser("Joakim", "ijdovbibszovhob120932349oi8yeSDVV!");
+		USERS.addUser("Teacher", "qwerty");
+		USERS.addUser("null", "");
 	}
 
 	@Override
@@ -68,9 +68,10 @@ public class ServerLogic extends UnicastRemoteObject implements IKatServer {
 	public void sentMessage(String message, int session) throws RemoteException {
 		System.out.println("Message recieved from:" + session + "\nMessage:" + message);
 		SessionInfo info = current_users.getSession(session);
-		if (info == null)
+		if (info == null) {
 			return;
-		
+		}
+
 		message = info.name + ": " + message;
 		synchronized (messages) {
 			messages.add(message);
@@ -90,7 +91,7 @@ public class ServerLogic extends UnicastRemoteObject implements IKatServer {
 			id = rand.nextInt();
 		} while (current_users.getSession(id) != null);
 
-		current_users.put(username, id);
+		current_users.put(username, id, messages.size());
 		return id;
 	}
 

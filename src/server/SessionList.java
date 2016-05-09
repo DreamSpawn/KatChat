@@ -17,14 +17,13 @@ public class SessionList {
 	Map<String,Integer> NameToId = new HashMap<>();
 	Map<Integer,SessionInfo> IdToInfo = new HashMap<>();
 	
-	
-	public boolean put(String name, int id){
+	public boolean put(String name, int id, int lastMSG){
 		if (!(NameToId.containsKey(name) || IdToInfo.containsKey(id))){
 			NameToId.put(name, id);
 			SessionInfo newInfo = new SessionInfo();
 			newInfo.id = id;
 			newInfo.name = name;
-			newInfo.lastMessage = 0;
+			newInfo.lastMessage = lastMSG;
 			IdToInfo.put(id,newInfo);
 			return true;
 		}
