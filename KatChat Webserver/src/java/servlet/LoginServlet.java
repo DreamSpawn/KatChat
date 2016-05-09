@@ -41,40 +41,33 @@ public class LoginServlet extends HttpServlet {
 	 */
 	private Login login;
 
+	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		response.setContentType("text/html");
 		IKatServer server = null;
 		try {
 			server = (IKatServer) Naming.lookup(IKatServer.FULL_ADDRESS);
-		} catch (NotBoundException ex) {
-			Logger.getLogger(LoginServlet.class.getName()).log(Level.SEVERE, null, ex);
-		} catch (MalformedURLException ex) {
-			Logger.getLogger(LoginServlet.class.getName()).log(Level.SEVERE, null, ex);
-		} catch (RemoteException ex) {
-			Logger.getLogger(LoginServlet.class.getName()).log(Level.SEVERE, null, ex);
+		} catch (NotBoundException | MalformedURLException | RemoteException ex) {
+			//TODO fejlbesked
 		}
-		PrintWriter printWriter = response.getWriter();
-		HttpSession httpSession = request.getSession(true);
-		String username = request.getParameter("userID");
-
-		httpSession.setAttribute("userID", username);
-		String password = request.getParameter("password");
-		httpSession.setAttribute("password", password);
+		//PrintWriter printWriter = response.getWriter();
 		HttpSession session = request.getSession();
-		login = (Login) session.getAttribute("login");
+
+		String username = request.getParameter("userID");
+		String password = request.getParameter("password");
+
+		session.setAttribute("userID", username);
+		session.setAttribute("password", password);
+
 		int sessionID = server.login(username, password);
 		if (sessionID != -1) {
-			login.setSessionId(sessionID);
-			//TJekker valid og giver session ID 
-
-			login.setUserName(username);
-			login.setSessionId(sessionID);
-			login.setValid(true);
-
+			session.setAttribute("JavaSessionID", sessionID);
 			String nextJSP = "/chat.jsp";
 			RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(nextJSP);//sender videre til ny jsp side
 			dispatcher.forward(request, response);
+		} else {
+			//TODO fejlbesked
 		}
 
 	}
