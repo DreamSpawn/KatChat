@@ -1,9 +1,6 @@
-<!DOCTYPE html>
-<!--
-To change this license header, choose License Headers in Project Properties.
-To change this template file, choose Tools | Templates
-and open the template in the editor.
--->
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+         pageEncoding="ISO-8859-1"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 	<head>
         <title>Kat Chat</title>
@@ -11,11 +8,19 @@ and open the template in the editor.
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<link rel="stylesheet" type="text/css" href="CSS/default.css">
 		<script type="text/javascript" src="Javascript/scripts.js"></script>
+
 	</head>
 	<body onload="getMessages()">
+		<script type="text/javascript">
+			var id = <%= session.getAttribute("JavaSessionID") %>
+		</script>
+		<div class=head>
+            <h1>Velkommen til chatten <%= session.getAttribute("userID") %></h1>
+        </div>
 		<textarea id="messages" readonly></textarea>
 		<BR>
-		<input type="text" id="input" onkeypress="if (event.keyCode === 13) sendMessage();">
+		<input type="text" id="input" onkeypress="if (event.keyCode === 13)
+					sendMessage();">
 		<button onclick="sendMessage()">Send</button>
 	</body>
 </html>

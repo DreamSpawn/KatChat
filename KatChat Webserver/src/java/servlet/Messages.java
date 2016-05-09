@@ -3,30 +3,22 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package webserver;
+package servlet;
 
+import connection.ChatServerConnector;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.net.MalformedURLException;
-import java.rmi.Naming;
-import java.rmi.NotBoundException;
-import java.rmi.RemoteException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import server.IKatServer;
-import server.JavaServer;
 
 /**
  *
  * @author Mikkel
  */
 public class Messages extends HttpServlet {
-	
-	String message = "<none>";
 
 	/**
 	 * Handles the HTTP <code>GET</code> method.
@@ -39,18 +31,19 @@ public class Messages extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-	
-		Object gate = new Object();
-		synchronized (gate) {
-			try {
-				gate.wait(1000);
-			} catch (InterruptedException e) {
-			}
-		}
 
+		int id = -1;
+		try {
+			id = Integer.parseInt(request.getParameter("id"));
+		} catch (Exception e) {
+		}
+		List<String> messages = ChatServerConnector.getMessage(id);
+		String message = "";
+		message = messages.stream().map((msg) -> msg + "\n").reduce(message, String::concat);
+		
 		response.setContentType("text/plain;charset=UTF-8");
 		try (PrintWriter out = response.getWriter()) {
-			out.println("New message tick. Last message:" + this.message);
+			out.print(message);
 		}
 	}
 
@@ -65,8 +58,13 @@ public class Messages extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		this.message = request.getParameter("message");
-		
+		int id = -1;
+		try {
+			id = Integer.parseInt(request.getParameter("id"));
+		} catch (Exception e) {
+		}
+
+		ChatServerConnector.sentMessage(request.getParameter("message"), id);
 	}
 
 	/**

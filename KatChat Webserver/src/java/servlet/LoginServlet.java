@@ -11,8 +11,6 @@ import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -39,18 +37,12 @@ public class LoginServlet extends HttpServlet {
 	 * @throws IOException if an I/O error occurs
 	 *
 	 */
-	private Login login;
-
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		response.setContentType("text/html");
 		IKatServer server = null;
-		try {
-			server = (IKatServer) Naming.lookup(IKatServer.FULL_ADDRESS);
-		} catch (NotBoundException | MalformedURLException | RemoteException ex) {
-			//TODO fejlbesked
-		}
+		int sessionID = -1;
 		//PrintWriter printWriter = response.getWriter();
 		HttpSession session = request.getSession();
 
@@ -60,33 +52,33 @@ public class LoginServlet extends HttpServlet {
 		session.setAttribute("userID", username);
 		session.setAttribute("password", password);
 
-		int sessionID = server.login(username, password);
-		if (sessionID != -1) {
-			session.setAttribute("JavaSessionID", sessionID);
-			String nextJSP = "/chat.jsp";
-			RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(nextJSP);//sender videre til ny jsp side
-			dispatcher.forward(request, response);
-		} else {
+		try {
+			server = (IKatServer) Naming.lookup(IKatServer.FULL_ADDRESS);
+			sessionID = server.login(username, password);
+		} catch (NotBoundException | MalformedURLException | RemoteException ex) {
 			//TODO fejlbesked
 		}
+
+		String nextJSP;
+		if (sessionID != -1) {
+			session.setAttribute("JavaSessionID", sessionID);
+			nextJSP = "/Chat.jsp";
+		} else {
+			//TODO fejlbesked
+			nextJSP = "/Login.jsp";
+		}
+		RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(nextJSP);//sender videre til ny jsp side
+		dispatcher.forward(request, response);
 
 	}
 
 	protected void processRequest(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		response.setContentType("text/html;charset=UTF-8");
-		try (PrintWriter out = response.getWriter()) {
-			/* TODO output your page here. You may use following sample code. */
-			out.println("<!DOCTYPE html>");
-			out.println("<html>");
-			out.println("<head>");
-			out.println("<title>Servlet LoginServlet</title>");
-			out.println("</head>");
-			out.println("<body>");
-			out.println("<h1>Servlet LoginServlet at " + request.getContextPath() + "</h1>");
-			out.println("</body>");
-			out.println("</html>");
-		}
+		String nextJSP = "/Login.jsp";
+		RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(nextJSP);//sender videre til ny jsp side
+		dispatcher.forward(request, response);
+
 	}
 
 	// <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

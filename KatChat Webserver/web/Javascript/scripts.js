@@ -12,7 +12,7 @@ function getMessages() {
 			updateText(xhttp.responseText);
 		}
 	};
-	xhttp.open("GET", "messages", true);
+	xhttp.open("GET", "messages?id=" + id, true);
 	xhttp.send();
 }
 
@@ -36,5 +36,5 @@ function sendMessage() {
 	};
 	xhttp.open("POST", "messages", true);
 	xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-	xhttp.send("message=" + message);
+	xhttp.send("message=" + message + "&id=" + id);
 }
