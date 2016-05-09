@@ -5,6 +5,7 @@
  */
 package server;
 
+import java.rmi.Naming;
 import java.util.HashMap;
 import java.util.Map;
 

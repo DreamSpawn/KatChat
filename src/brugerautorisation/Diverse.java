@@ -13,13 +13,13 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Properties;
-import javax.mail.Message;
+/*import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMessage;*/
 
 /**
  *
@@ -43,7 +43,7 @@ public class Diverse {
 		return sb.toString();
 	}
 
-	public static void sendMail(String emne, String tekst, String modtagere) throws MessagingException {
+/*	public static void sendMail(String emne, String tekst, String modtagere) throws MessagingException {
 		// Husk først at sænke sikkerheden på https://www.google.com/settings/security/lesssecureapps
 		final String afsender = "android.ihk@gmail.com";
 		System.out.println("sendMail "+emne+ " "+modtagere);
@@ -78,5 +78,5 @@ public class Diverse {
 		message.setText(tekst);
 
 		Transport.send(message);
-	}
+	}*/
 }
