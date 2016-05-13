@@ -13,8 +13,8 @@ import java.util.ArrayList;
  */
 public interface IKatServer extends java.rmi.Remote{
 	public static final int PORT = 4092;
-	//public static final String HOST = "ubuntu4.javabog.dk";
-	public static final String HOST = "localhost";
+	public static final String HOST = "ubuntu4.javabog.dk";
+	//public static final String HOST = "localhost";
 	public static final String SERVICE = "kat_chat";
 	public static final String FULL_ADDRESS = "rmi://" + HOST + ":" + PORT + "/" + SERVICE;
 	
