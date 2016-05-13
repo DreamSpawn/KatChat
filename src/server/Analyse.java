@@ -33,7 +33,7 @@ public class Analyse {
                 if(messageSplit[1].equalsIgnoreCase("save")){
                     
                     emoji.addCat(messageSplit[2], messageSplit[3]);
-                return "new cat is added";
+                return "new cat is added "+messageSplit[2]+" - "+messageSplit[3];
             }else{
                     return emoji.getCat(messageSplit[1]);
                 }
