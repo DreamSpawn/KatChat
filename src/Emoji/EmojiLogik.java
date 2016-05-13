@@ -3,6 +3,7 @@ package Emoji;
 import java.util.ArrayList;
 import java.rmi.server.UnicastRemoteObject;
 import Emoji.emoji;
+import java.util.Random;
 
 public class EmojiLogik extends UnicastRemoteObject implements EmojiI{
 	
@@ -20,13 +21,18 @@ public class EmojiLogik extends UnicastRemoteObject implements EmojiI{
 	}
 
 	public void addCat(String emojipic, String name)throws java.rmi.RemoteException  {
-		emoji temp = new emoji(emojipic,name);
+		for(int i = 0;i<emojiList.size();i++){
+			if(emojiList.get(i).getName().equals(name))return;
+		}; 
+                emoji temp = new emoji(emojipic,name);
 		emojiList.add(temp);
 	}
 
 	public String getCat()throws java.rmi.RemoteException  {
 		// tilføj random generator her
-		return emojiList.get(0).getEmoji();
+            Random rand = new Random();
+            int i = rand.nextInt(emojiList.size());
+		return emojiList.get(i).getEmoji();
 	}
 
 	public String getCat(String name) throws java.rmi.RemoteException {

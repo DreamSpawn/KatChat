@@ -11,7 +11,10 @@ import java.util.Random;
 import java.rmi.*;
 import java.rmi.server.*;
 import java.util.List;
-
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import brugerautorisation.data.Bruger;
+import java.net.MalformedURLException;
 /**
  *
  * @author Mikkel
@@ -35,10 +38,20 @@ public class ServerLogic extends UnicastRemoteObject implements IKatServer {
 
 	@Override
 	public int login(String name, String password) throws RemoteException {
-		if (USERS.hasUser(name.trim(), password)) {
+            Brugeradmin ba;
+            try {
+                ba = (Brugeradmin) Naming.lookup("rmi://javabog.dk/brugeradmin");
+                Bruger b = ba.hentBruger(name, password);
+                
 			System.out.println("successful login");
 			return getSessionId(name);
-		}
+		
+            } catch (NotBoundException ex) {
+                Logger.getLogger(ServerLogic.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (MalformedURLException ex) {
+                Logger.getLogger(ServerLogic.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            	
 		System.out.println("unsuccessful login");
 		return -1;
 	}
@@ -68,11 +81,18 @@ public class ServerLogic extends UnicastRemoteObject implements IKatServer {
 	public void sentMessage(String message, int session) throws RemoteException {
 		System.out.println("Message recieved from:" + session + "\nMessage:" + message);
 		SessionInfo info = current_users.getSession(session);
-		if (info == null) {
+                Analyse am = new Analyse();
+                
+            try {
+                String analyseM =am.analyse(message,info.name);
+            } catch (Exception ex) {
+                Logger.getLogger(ServerLogic.class.getName()).log(Level.SEVERE, null, ex);
+            }
+		if (info == null || am.equals("")) {
 			return;
 		}
 
-		message = info.name + ": " + message;
+		message = info.name + ": " + am;
 		synchronized (messages) {
 			messages.add(message);
 			messages.notifyAll();
