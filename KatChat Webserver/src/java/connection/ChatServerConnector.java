@@ -36,13 +36,14 @@ public class ChatServerConnector {
 		return -1;
 	}
 	
-	public static void sentMessage(String message, int session) {
+	public static String sentMessage(String message, int session) {
 		IKatServer srv = connect();
 		try {
-			srv.sentMessage(message, session);
+			return srv.sentMessage(message, session);
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
+                return"";
 	}
 	
 	public static ArrayList<String> getMessage(int session) {
