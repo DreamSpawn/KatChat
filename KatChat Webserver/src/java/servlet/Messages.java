@@ -39,8 +39,11 @@ public class Messages extends HttpServlet {
 		}
 		List<String> messages = ChatServerConnector.getMessage(id);
 		String message = "";
-		message = messages.stream().map((msg) -> msg + "\n").reduce(message, String::concat);
-		
+		if (messages != null) {
+			message = messages.stream().map((msg) -> msg + "\n").reduce(message, String::concat);
+		} else {
+			//TODO håndtere fejl
+		}
 		response.setContentType("text/plain;charset=UTF-8");
 		try (PrintWriter out = response.getWriter()) {
 			out.print(message);

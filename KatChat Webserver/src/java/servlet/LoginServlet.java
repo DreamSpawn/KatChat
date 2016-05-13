@@ -42,7 +42,6 @@ public class LoginServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		response.setContentType("text/html");
-		IKatServer server = null;
 		int sessionID = -1;
 		//PrintWriter printWriter = response.getWriter();
 		HttpSession session = request.getSession();
@@ -69,15 +68,6 @@ public class LoginServlet extends HttpServlet {
 
 	}
 
-	protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		response.setContentType("text/html;charset=UTF-8");
-		String nextJSP = "/Login.jsp";
-		RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(nextJSP);//sender videre til ny jsp side
-		dispatcher.forward(request, response);
-
-	}
-
 	// <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
 	/**
 	 * Handles the HTTP <code>GET</code> method.
@@ -90,7 +80,12 @@ public class LoginServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		processRequest(request, response);
+		response.setContentType("text/html;charset=UTF-8");
+		HttpSession session = request.getSession();
+		session.setAttribute("error", null);
+		String nextJSP = "/Login.jsp";
+		RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(nextJSP);//sender videre til ny jsp side
+		dispatcher.forward(request, response);
 	}
 
 	/**
