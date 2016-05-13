@@ -6,7 +6,7 @@
 package server;
 
 import brugerautorisation.data.Bruger;
-import brugerautorisation.transport.rmi.Brugeradmin;
+//import brugerautorisation.transport.rmi.Brugeradmin;
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
@@ -28,7 +28,7 @@ public class UserDatabaseMap implements IUserDataBase {
 	public boolean hasUser(String name, String password) {
 		try {
 			//Brugeradmin ba = (Brugeradmin2) Naming.lookup("rmi://localhost:4089/brugeradmin");
-                        Brugeradmin ba = (Brugeradmin) Naming.lookup("rmi://javabog.dk/brugeradmin");
+			Brugeradmin ba = (Brugeradmin) Naming.lookup("rmi://javabog.dk/brugeradmin");
 			Bruger b = ba.hentBruger(name, password);
 
 			System.out.println("User found in remote database");
@@ -39,10 +39,10 @@ public class UserDatabaseMap implements IUserDataBase {
 			Logger.getLogger(ServerLogic.class.getName()).log(Level.SEVERE, null, ex);
 		} catch (RemoteException ex) {
 			Logger.getLogger(UserDatabaseMap.class.getName()).log(Level.SEVERE, null, ex);
-		} catch(IllegalArgumentException e){
-                    System.out.println("User nor found in remote - checking local");
-		return (USERS.containsKey(name) && USERS.get(name).equals(password));
-                }
+		} catch (IllegalArgumentException e) {
+			System.out.println("User nor found in remote - checking local");
+			return (USERS.containsKey(name) && USERS.get(name).equals(password));
+		}
 
 		System.out.println("User nor found in remote - checking local");
 		return (USERS.containsKey(name) && USERS.get(name).equals(password));
