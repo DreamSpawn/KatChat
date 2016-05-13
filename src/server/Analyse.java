@@ -21,17 +21,17 @@ public class Analyse {
  
     public String analyse(String message, String name) throws Exception{
         
-        
+        if(!message.equals("")){
         if(message.charAt(0) == '!'){
             EmojiI emoji =(EmojiI) Naming.lookup("rmi://localhost/emoji");
             if(message.charAt(1)== 'E'||message.charAt(1)== 'e'){
-                String[] messageSplit = message.split(" ",3);
+                String[] messageSplit = message.split(" ");
                 if(messageSplit[1].equalsIgnoreCase("random")){
                 return emoji.getCat();
             }
                 if(messageSplit[1].equalsIgnoreCase("save")){
-                    String[] messageSaveSplit = messageSplit[2].split(" ",3);
-                    emoji.addCat(messageSaveSplit[0], messageSaveSplit[1]);
+                    
+                    emoji.addCat(messageSplit[2], messageSplit[3]);
                 return "new cat is added";
             }else{
                     return emoji.getCat(messageSplit[1]);
@@ -56,6 +56,7 @@ public class Analyse {
             }   
             }
             return "";
+        }
         }
         
         return message;
