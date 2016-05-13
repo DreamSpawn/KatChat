@@ -9,6 +9,12 @@ public class EmojiTest {
 		EmojiI spil =(EmojiI) Naming.lookup("rmi://localhost/emoji");
 		String cat =spil.getCat();
 		System.out.println(cat); 
+                cat =spil.getCat();
+		System.out.println(cat);
+                cat =spil.getCat();
+		System.out.println(cat); 
+                cat =spil.getCat();
+		System.out.println(cat); 
 
 /*
 		Galgelogik spil = new Galgelogik();
