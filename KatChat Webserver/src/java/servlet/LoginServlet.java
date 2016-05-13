@@ -5,6 +5,7 @@
  */
 package servlet;
 
+import connection.ChatServerConnector;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.MalformedURLException;
@@ -52,12 +53,8 @@ public class LoginServlet extends HttpServlet {
 		session.setAttribute("userID", username);
 		session.setAttribute("password", password);
 
-		try {
-			server = (IKatServer) Naming.lookup(IKatServer.FULL_ADDRESS);
-			sessionID = server.login(username, password);
-		} catch (NotBoundException | MalformedURLException | RemoteException ex) {
-			//TODO fejlbesked
-		}
+		
+		sessionID = ChatServerConnector.login(username, password);
 
 		String nextJSP;
 		if (sessionID != -1) {
