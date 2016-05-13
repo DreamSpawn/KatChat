@@ -38,22 +38,11 @@ public class ServerLogic extends UnicastRemoteObject implements IKatServer {
 
 	@Override
 	public int login(String name, String password) throws RemoteException {
-            Brugeradmin ba;
-            try {
-                ba = (Brugeradmin) Naming.lookup("rmi://javabog.dk/brugeradmin");
-                Bruger b = ba.hentBruger(name, password);
-                
-			System.out.println("successful login");
+		if (USERS.hasUser(name, password)){
 			return getSessionId(name);
-		
-            } catch (NotBoundException ex) {
-                Logger.getLogger(ServerLogic.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (MalformedURLException ex) {
-                Logger.getLogger(ServerLogic.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            	
-		System.out.println("unsuccessful login");
-		return -1;
+		} else {
+			return -1;
+		}
 	}
 
 	@Override
