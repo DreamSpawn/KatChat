@@ -22,7 +22,7 @@ public class EmojiLogik extends UnicastRemoteObject implements EmojiI{
 
 	public void addCat(String emojipic, String name)throws java.rmi.RemoteException  {
 		for(int i = 0;i<emojiList.size();i++){
-			if(emojiList.get(i).getName().equals(name))return;
+			if(emojiList.get(i).getName().equalsIgnoreCase(name))return;
 		}; 
                 emoji temp = new emoji(emojipic,name);
 		emojiList.add(temp);
@@ -37,7 +37,9 @@ public class EmojiLogik extends UnicastRemoteObject implements EmojiI{
 
 	public String getCat(String name) throws java.rmi.RemoteException {
 		for(int i = 0;i<emojiList.size();i++){
-			if(emojiList.get(i).getName().equals(name))emojiList.get(i).getEmoji();
+			if(emojiList.get(i).getName().equals(name))  
+                            return emojiList.get(i).getEmoji();
+                        System.out.println(emojiList.get(i).getEmoji());
 		}; 
 		return emojiList.get(0).getEmoji();
 	}
