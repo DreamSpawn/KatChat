@@ -67,18 +67,21 @@ public class ServerLogic extends UnicastRemoteObject implements IKatServer {
 	}
 
 	@Override
-	public void sentMessage(String message, int session) throws RemoteException {
+	public String sentMessage(String message, int session) throws RemoteException {
 		System.out.println("Message recieved from:" + session + "\nMessage:" + message);
 		SessionInfo info = current_users.getSession(session);
+                if(info == null) return "need to login to chat";
                 Analyse am = new Analyse();
                 String analyseM ="";
             try {
                 analyseM =am.analyse(message,info.name);
             } catch (Exception ex) {
-                Logger.getLogger(ServerLogic.class.getName()).log(Level.SEVERE, null, ex);
+                return "something went wrong";
+              
             }
-		if (info == null || analyseM.equals("")) {
-			return;
+		if(message.equals("")) return"";
+                if (analyseM.equals("")) {
+			return "something went right";
 		}
 
 		message = info.name + ": " + analyseM;
@@ -86,6 +89,7 @@ public class ServerLogic extends UnicastRemoteObject implements IKatServer {
 			messages.add(message);
 			messages.notifyAll();
 		}
+                return "";
 	}
 
 	private int getSessionId(String username) {
