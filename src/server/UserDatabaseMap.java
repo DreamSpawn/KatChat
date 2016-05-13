@@ -6,7 +6,7 @@
 package server;
 
 import brugerautorisation.data.Bruger;
-//import brugerautorisation.transport.rmi.Brugeradmin;
+import brugerautorisation.transport.rmi.Brugeradmin;
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
