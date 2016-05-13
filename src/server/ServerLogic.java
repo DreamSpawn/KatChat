@@ -71,17 +71,17 @@ public class ServerLogic extends UnicastRemoteObject implements IKatServer {
 		System.out.println("Message recieved from:" + session + "\nMessage:" + message);
 		SessionInfo info = current_users.getSession(session);
                 Analyse am = new Analyse();
-                
+                String analyseM ="";
             try {
-                String analyseM =am.analyse(message,info.name);
+                analyseM =am.analyse(message,info.name);
             } catch (Exception ex) {
                 Logger.getLogger(ServerLogic.class.getName()).log(Level.SEVERE, null, ex);
             }
-		if (info == null || am.equals("")) {
+		if (info == null || analyseM.equals("")) {
 			return;
 		}
 
-		message = info.name + ": " + am;
+		message = info.name + ": " + analyseM;
 		synchronized (messages) {
 			messages.add(message);
 			messages.notifyAll();

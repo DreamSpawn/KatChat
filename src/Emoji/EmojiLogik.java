@@ -39,7 +39,7 @@ public class EmojiLogik extends UnicastRemoteObject implements EmojiI{
 		for(int i = 0;i<emojiList.size();i++){
 			if(emojiList.get(i).getName().equals(name))  
                             return emojiList.get(i).getEmoji();
-                        System.out.println(emojiList.get(i).getEmoji());
+                   
 		}; 
 		return emojiList.get(0).getEmoji();
 	}
