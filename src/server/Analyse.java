@@ -24,7 +24,7 @@ public class Analyse {
         
         if(!message.equals("")){
         if(message.charAt(0) == '!'){
-            EmojiI emoji =(EmojiI) Naming.lookup("rmi://localhost/emoji");
+            EmojiI emoji =(EmojiI) Naming.lookup(EmojiI.FULL_ADDRESS);
             if(message.charAt(1)== 'E'||message.charAt(1)== 'e'){
                 String[] messageSplit = message.split(" ");
                 if(messageSplit[1].equalsIgnoreCase("random")){
