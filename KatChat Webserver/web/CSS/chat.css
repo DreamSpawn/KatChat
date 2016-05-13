@@ -4,12 +4,21 @@ To change this template file, choose Tools | Templates
 and open the template in the editor.
 */
 /* 
-    Created on : May 9, 2016, 3:26:27 PM
+    Created on : May 13, 2016, 12:24:41 PM
     Author     : Mikkel
 */
 
-.error {
-	border: red dashed 1px;
-	color: red;
-	padding: .5em;
+textarea {
+	width: 50em;
+	height: 30em;
+}
+
+input {
+	width: 44em;
+	height: 2em;
+}
+
+button {
+	height: 2em;
+	width: 5em;
 }

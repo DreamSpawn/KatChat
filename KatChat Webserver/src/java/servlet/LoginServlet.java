@@ -61,7 +61,7 @@ public class LoginServlet extends HttpServlet {
 			session.setAttribute("JavaSessionID", sessionID);
 			nextJSP = "/Chat.jsp";
 		} else {
-			//TODO fejlbesked
+			session.setAttribute("error", "Brugernavn eller kodeord er ikke korrekt");
 			nextJSP = "/Login.jsp";
 		}
 		RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(nextJSP);//sender videre til ny jsp side

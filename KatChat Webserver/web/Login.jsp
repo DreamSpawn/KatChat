@@ -7,13 +7,19 @@
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
         <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
         <title>Welcome to KatChat</title>
-        <link href="CSS/login.css" type="text/css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="CSS/common.css"/>
+        <link rel="stylesheet" type="text/css" href="CSS/login.css"/>
     </head>
     <body>
         <div class=head>
             <h1>Log ind</h1>
             <br>
         </div>
+		<% if (session.getAttribute("error") != null){ %>
+		<div class=error>
+			<%= session.getAttribute("error") %>
+		</div>
+		<% }%>
         <div class=content>
             <form method="POST" action="LoginServlet">
                 <fieldset>

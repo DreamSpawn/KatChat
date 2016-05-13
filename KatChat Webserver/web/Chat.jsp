@@ -6,7 +6,8 @@
         <title>Kat Chat</title>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<link rel="stylesheet" type="text/css" href="CSS/default.css">
+		<link rel="stylesheet" type="text/css" href="CSS/common.css">
+		<link rel="stylesheet" type="text/css" href="CSS/chat.css">
 		<script type="text/javascript" src="Javascript/scripts.js"></script>
 
 	</head>
