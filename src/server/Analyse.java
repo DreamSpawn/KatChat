@@ -33,7 +33,7 @@ public class Analyse {
                 if(messageSplit[1].equalsIgnoreCase("save")){
                     
                     emoji.addCat(messageSplit[2], messageSplit[3]);
-                return "new cat is added "+messageSplit[2]+" - "+messageSplit[3];
+                return "I added a new cat is added "+messageSplit[2]+" - "+messageSplit[3];
             }else{
                     return emoji.getCat(messageSplit[1]);
                 }
@@ -43,11 +43,11 @@ public class Analyse {
         }if(message.charAt(0) == '/'){
             String[] messageSplit = message.split(" ",3);
                 
-            if(messageSplit[0]== "/password"){
+            if(messageSplit[0].equals("/password")){
              Brugeradmin ba;
                 try {
                 ba = (Brugeradmin) Naming.lookup("rmi://javabog.dk/brugeradmin");
-                Bruger b = ba.ændrAdgangskode(name, messageSplit[1],messageSplit[2]);
+               ba.ændrAdgangskode(name, messageSplit[1],messageSplit[2]);
                 
 			
             } catch (NotBoundException ex) {

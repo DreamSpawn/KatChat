@@ -56,7 +56,8 @@ public class ChatUI {
 	public void doSendMsg(JTextField input) {
 		System.out.println("Sending message:" + input.getText());
 		try {
-			srv.sentMessage(input.getText(), sessionID);
+			String status = srv.sentMessage(input.getText(), sessionID);
+                        if(!status.equals(""))recievedText.setText(recievedText.getText()+ "\n" + status);
 			input.setText("");
 		} catch (Exception e) {
 			e.printStackTrace();
