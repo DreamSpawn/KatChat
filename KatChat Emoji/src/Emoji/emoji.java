@@ -2,18 +2,28 @@ package Emoji;
 
 public class emoji {
 
-	private String Name;
+	private String name;
 	private String emoji;
-	
-	public emoji(String cat,String name){
-		this.setName(name);
-		this.setEmoji(cat);
+
+	public emoji(String cat, String name) {
+		this.name = name;
+		this.emoji = cat;
 	}
 
-	public String getName() {return Name;}
-	public void setName(String Name) {this.Name = Name;}
+	public String getName() {
+		return name;
+	}
 
-	public String getEmoji() {return emoji;}
-	public void setEmoji(String emoji) {this.emoji = emoji;}
+	public void setName(String Name) {
+		this.name = Name;
+	}
+
+	public String getEmoji() {
+		return emoji;
+	}
+
+	public void setEmoji(String emoji) {
+		this.emoji = emoji;
+	}
 
 }

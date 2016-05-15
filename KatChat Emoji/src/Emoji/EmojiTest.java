@@ -6,7 +6,7 @@ public class EmojiTest {
 
 	public static void main(String[] args) throws Exception {
 
-		EmojiI spil =(EmojiI) Naming.lookup("rmi://localhost/emoji");
+		IEmoji spil =(IEmoji) Naming.lookup("rmi://localhost/emoji");
 		String cat =spil.getCat();
 		System.out.println(cat); 
                 cat =spil.getCat();
