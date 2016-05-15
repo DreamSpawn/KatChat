@@ -5,6 +5,9 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.rmi.Naming;
+import java.rmi.RemoteException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -24,25 +27,37 @@ public class ChatUI {
 
 	private boolean isUserNameOK = false;
 	private int sessionID;
-	private IKatServer srv;
 	private JTextArea recievedText;
+	private JButton buttonSend;
+	private	JButton buttonLogout;
+	private	JButton buttonLogin;
+	private JTextField textToSend;
+	private JPanel panelTop;
+	private JTextField textUserName;
+	private JTextField textPswd;
+	private JLabel labelUser;
+	private JLabel labelName;
+	private JLabel labelPswd;
 
-	public void doConnect() {
+
+
+
+	public static IKatServer doConnect() {
 		System.out.println("client.ChatUI.doConnect()");
 		try {
-			srv = (IKatServer) Naming.lookup(IKatServer.FULL_ADDRESS);
+			IKatServer srv = (IKatServer) Naming.lookup(IKatServer.FULL_ADDRESS);
+			System.out.println("connected to server at" + IKatServer.FULL_ADDRESS);
+			return srv;
 		} catch (Exception e) {
-			e.printStackTrace();
+			//e.printStackTrace();
+			return null;
 		}
-		System.out.println("connected to server at" + IKatServer.FULL_ADDRESS);
+		
 	}
 
-	public int doLogin(String userName, String pswd) {
+	private static int doLogin(String userName, String pswd) {
 		System.out.println("client.ChatUI.doLogin()");
-		if (srv == null) {
-			doConnect();
-		}
-
+		IKatServer srv = doConnect();
 		int sID = 0;
 		try {
 			sID = srv.login(userName, pswd);
@@ -53,37 +68,65 @@ public class ChatUI {
 		return sID;
 	}
 
-	public void doSendMsg(JTextField input) {
+	private static void doSendMsg(JTextField input,JTextArea recievedText, int sessionID) {
 		System.out.println("Sending message:" + input.getText());
+		IKatServer srv = doConnect();
+
 		try {
 			String status = srv.sentMessage(input.getText(), sessionID);
-                        if(!status.equals(""))recievedText.setText(recievedText.getText()+ "\n" + status);
+			if (!status.equals("")) {
+				if (status.equals("/illegal session")){
+					status = "Din session er ikke længere gyldig, prøv at logge ind igen";
+				}
+				recievedText.setText(recievedText.getText() + status + "\n");
+			}
 			input.setText("");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	private void reset(){
+		this.textToSend.setText("");
+		this.textToSend.setVisible(false);
+		this.buttonSend.setVisible(false);
+		this.panelTop.remove(labelName);
+		this.panelTop.remove(buttonLogout);
+		textUserName.setText("");
+		this.panelTop.add(textUserName);
+		this.panelTop.add(labelPswd);
+		textPswd.setText("");
+		this.panelTop.add(textPswd);
+		this.panelTop.add(buttonLogin);
+		IKatServer server = doConnect();
+		try {
+			server.logOut(sessionID);
+		} catch (RemoteException ex) {
+		}
+		sessionID = 0;
+		recievedText.setText(recievedText.getText()+ "Logget ud fra serveren\n");
 	}
 
 	public ChatUI() {
 		System.out.println("ChatUI");
 		final JFrame frame = new JFrame("KatChat");
 		final JPanel panelMain = new JPanel();
-		final JPanel panelTop = new JPanel();
+		this.panelTop = new JPanel();
 		final JPanel panelCN = new JPanel();
 		final JPanel panelButtom = new JPanel();
-		final JTextField textToSend = new JTextField();
-		final JTextField textUserName = new JTextField();
-		final JTextField textPswd = new JTextField();
-		final JLabel labelUser = new JLabel("Brugernavn: ");
-		final JLabel labelName = new JLabel("");
-		final JLabel labelPswd = new JLabel("Kodeord: ");
-		final JButton buttonSend = new JButton("Send");
-		final JButton buttonLogin = new JButton("Login");
+		this.textToSend = new JTextField();
+		this.textUserName = new JTextField();
+		this.textPswd = new JTextField();
+		this.labelUser = new JLabel("Brugernavn: ");
+		this.labelName = new JLabel("");
+		this.labelPswd = new JLabel("Kodeord: ");
+		this.buttonSend = new JButton("Send");
+		this.buttonLogout = new JButton("Log ud");
+		this.buttonLogin = new JButton("Log ind");
 		this.recievedText = new JTextArea();
 		final JScrollPane scrollPane = new JScrollPane(this.recievedText);
-		
-		//final JList ls = new JList();
 
+		//final JList ls = new JList();
 		panelMain.setLayout(new BorderLayout(5, 5));
 		panelTop.setLayout(new GridLayout(1, 5));
 		panelCN.setLayout(new BorderLayout(5, 5));
@@ -98,14 +141,13 @@ public class ChatUI {
 		//panelCN.add(new JScrollPane(), BorderLayout.CENTER);
 		//panelCN.add(ls, BorderLayout.EAST);
 		//ls.setVisible(false);
-
 		recievedText.setEditable(false);
 		panelCN.add(scrollPane);
-		
+
 		panelButtom.add(textToSend, BorderLayout.CENTER);
 		panelButtom.add(buttonSend, BorderLayout.EAST);
-		textToSend.setVisible(false);
-		buttonSend.setVisible(false);
+		this.textToSend.setVisible(false);
+		this.buttonSend.setVisible(false);
 
 		panelMain.add(panelTop, BorderLayout.NORTH);
 		panelMain.add(panelCN, BorderLayout.CENTER);
@@ -135,33 +177,40 @@ public class ChatUI {
 						panelTop.remove(labelPswd);
 						panelTop.remove(buttonLogin);
 						panelTop.add(labelName);
+						panelTop.add(buttonLogout);
 						// ls.setVisible(true);
 						textToSend.setVisible(true);
 						buttonSend.setVisible(true);
-						recievedText.setText("Logged in to server");
-						MessageFetcher fetcher = new MessageFetcher(srv, recievedText, sessionID);
-						 (new Thread(fetcher)).start();
+						buttonLogout.setVisible(true);
+						recievedText.setText(recievedText.getText()+ "Logget ind på serveren\n");
+						MessageFetcher fetcher = new MessageFetcher(recievedText, sessionID);
+						(new Thread(fetcher)).start();
 					}
 				}
 			}
 
 		});
+		
+		buttonLogout.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				reset();
+			}
+		});
 
 		textToSend.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				doSendMsg(textToSend);
-			}
-		});
-		
-		buttonSend.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				doSendMsg(textToSend);
+				doSendMsg(textToSend, recievedText, sessionID);
 			}
 		});
 
-		
+		buttonSend.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				doSendMsg(textToSend, recievedText, sessionID);
+			}
+		});
 
 		frame.setContentPane(panelMain);
 		frame.setSize(500, 500);

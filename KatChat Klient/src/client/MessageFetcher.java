@@ -21,11 +21,9 @@ import server.IKatServer;
 public class MessageFetcher implements Runnable{
 
 	JTextArea textArea;
-	IKatServer server;
 	int session;
 	
-	public MessageFetcher(IKatServer server, JTextArea textArea, int session){
-		this.server = server;
+	public MessageFetcher(JTextArea textArea, int session){
 		this.textArea = textArea;
 		this.session = session;
 	}
@@ -34,11 +32,18 @@ public class MessageFetcher implements Runnable{
 	public void run() {
 		while(true){
 			try {
+				IKatServer server = ChatUI.doConnect();
 				List<String> messages = server.getMessage(session);
+				if (messages == null || messages.get(0).equals("/Logged out")){
+					textArea.setText(textArea.getText()+ "Forbindelse til serveren blev afbrudt\n");
+					return;
+				}
 				for(String msg : messages){
-					textArea.setText(textArea.getText()+ "\n" + msg);
+					textArea.setText(textArea.getText() + msg + "\n");
 				}
 			} catch (RemoteException ex) {
+				textArea.setText(textArea.getText()+ "Forbindelse til serveren blev afbrudt\n");
+				return;
 			}
 		}
 	}
