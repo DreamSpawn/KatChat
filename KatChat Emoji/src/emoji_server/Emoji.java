@@ -1,11 +1,11 @@
-package Emoji;
+package emoji_server;
 
-public class emoji {
+public class Emoji {
 
 	private String name;
 	private String emoji;
 
-	public emoji(String cat, String name) {
+	public Emoji(String cat, String name) {
 		this.name = name;
 		this.emoji = cat;
 	}
