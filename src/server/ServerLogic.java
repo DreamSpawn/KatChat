@@ -6,24 +6,21 @@
 package server;
 
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.Random;
 import java.rmi.*;
 import java.rmi.server.*;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import brugerautorisation.data.Bruger;
-import java.net.MalformedURLException;
+
 /**
  *
  * @author Mikkel
  */
 public class ServerLogic extends UnicastRemoteObject implements IKatServer {
 
-	private static SessionList current_users = new SessionList();
-	public static List<String> messages = new ArrayList<>();
-
+	private static final SessionList CURRENT_USERS = new SessionList();
+	private static final List<String> MESSAGES = new ArrayList<>();
 	private static final IUserDataBase USERS = new UserDatabaseMap();
 
 	public ServerLogic() throws RemoteException {
@@ -38,29 +35,42 @@ public class ServerLogic extends UnicastRemoteObject implements IKatServer {
 
 	@Override
 	public int login(String name, String password) throws RemoteException {
-		if (USERS.hasUser(name, password)){
-			return getSessionId(name);
+		if (USERS.hasUser(name, password)) {
+			return makeSessionId(name);
 		} else {
 			return -1;
 		}
 	}
 
 	@Override
+	public void logOut(int session) {
+		CURRENT_USERS.remove(session);
+	}
+
+	@Override
 	public ArrayList<String> getMessage(int session) throws RemoteException {
-		SessionInfo info = current_users.getSession(session);
+		SessionInfo info = CURRENT_USERS.getSession(session);
 		if (info != null) {
-			if (info.lastMessage == messages.size()) {
-				synchronized (messages) {
+			if (info.lastMessage == MESSAGES.size()) {
+				synchronized (MESSAGES) {
 					try {
-						messages.wait();
+						MESSAGES.wait();
 					} catch (InterruptedException ex) {
 					}
 				}
 			}
+			// check that we haven't been logged out while we waited
+			info = CURRENT_USERS.getSession(session);
+			if (info == null) {
+				ArrayList<String> returnList = new ArrayList<>();
+				returnList.add("/Logged out");
+				return returnList;
+			}
+
 			ArrayList<String> returnMessages = new ArrayList<>(
-					messages.subList(info.lastMessage, messages.size()));
-			info.lastMessage = messages.size();
-			current_users.update(session, info);
+					MESSAGES.subList(info.lastMessage, MESSAGES.size()));
+			info.lastMessage = MESSAGES.size();
+			CURRENT_USERS.update(session, info);
 			return returnMessages;
 		}
 		return null;
@@ -69,42 +79,48 @@ public class ServerLogic extends UnicastRemoteObject implements IKatServer {
 	@Override
 	public String sentMessage(String message, int session) throws RemoteException {
 		System.out.println("Message recieved from:" + session + "\nMessage:" + message);
-		SessionInfo info = current_users.getSession(session);
-                if(info == null) return "need to login to chat";
-                Analyse am = new Analyse();
-                String analyseM ="";
-            try {
-                analyseM =am.analyse(message,info.name);
-            } catch (Exception ex) {
-                return "something went wrong";
-              
-            }
-		if(message.equals("")) return"";
-                if (analyseM.equals("")) {
-			return "something went right";
+		SessionInfo info = CURRENT_USERS.getSession(session);
+
+		if (info == null) {
+			return "/illegal session";
+		}
+
+		if (message.equals("")) {
+			return "";
+		}
+
+		Analyse am = new Analyse();
+		String analyseM;
+		try {
+			analyseM = am.analyse(message, info.name);
+		} catch (Exception ex) {
+			String msg = "Der skete en uforudset fejl i java serveren:\n";
+			msg += ex.getMessage();
+			Logger.getLogger(ServerLogic.class.getName()).log(Level.SEVERE, null, ex);
+			return msg;
+		}
+
+		if (!analyseM.equals("") && analyseM.charAt(0) == '/') {
+			return analyseM.substring(1);
 		}
 
 		message = info.name + ": " + analyseM;
-		synchronized (messages) {
-			messages.add(message);
-			messages.notifyAll();
+		synchronized (MESSAGES) {
+			MESSAGES.add(message);
+			MESSAGES.notifyAll();
 		}
-                return "";
+		return "";
 	}
 
-	private int getSessionId(String username) {
-		if (current_users.getId(username) != null) {
-			return current_users.getId(username);
-		}
-
+	private int makeSessionId(String username) {
 		Random rand = new Random();
 
 		int id;
 		do {
 			id = rand.nextInt();
-		} while (id <= 0 || current_users.getSession(id) != null);
+		} while (id <= 0 || CURRENT_USERS.getSession(id) != null);
 
-		current_users.put(username, id, messages.size());
+		CURRENT_USERS.put(username, id, MESSAGES.size());
 		return id;
 	}
 }
