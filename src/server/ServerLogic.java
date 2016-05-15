@@ -98,18 +98,9 @@ public class ServerLogic extends UnicastRemoteObject implements IKatServer {
 		int id;
 		do {
 			id = rand.nextInt();
-		} while (current_users.getSession(id) != null);
+		} while (id <= 0 || current_users.getSession(id) != null);
 
 		current_users.put(username, id, messages.size());
 		return id;
 	}
-
-	private void printCurrentUsers() {
-		for (Map.Entry<Integer, SessionInfo> entry : current_users.entrySet()) {
-			int session_id = entry.getKey();
-			String username = entry.getValue().name;
-			System.out.println("session Id " + session_id + " username " + username + "\n");
-		}
-	}
-
 }
